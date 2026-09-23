@@ -1,53 +1,12 @@
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { saveTransactionFilter } from "./actions";
-
-type Transaction = {
-  id: string;
-  name: string;
-  type: "income" | "expense";
-  amount: number;
-  date: string;
-};
-
-const transactions: Transaction[] = [
-  {
-    id: "1",
-    name: "Uang bulanan",
-    type: "income",
-    amount: 2000000,
-    date: "2026-09-01",
-  },
-  {
-    id: "2",
-    name: "Makan siang",
-    type: "expense",
-    amount: 25000,
-    date: "2026-09-02",
-  },
-  {
-    id: "3",
-    name: "Transportasi",
-    type: "expense",
-    amount: 50000,
-    date: "2026-09-03",
-  },
-  {
-    id: "4",
-    name: "Pendapatan freelance",
-    type: "income",
-    amount: 500000,
-    date: "2026-09-04",
-  },
-];
-
-function formatRupiah(amount: number) {
-  return new Intl.NumberFormat("id-ID", {
-    style: "currency",
-    currency: "IDR",
-    maximumFractionDigits: 0,
-  }).format(amount);
-}
+import {
+  dummyTransactions,
+  formatRupiah,
+  formatTransactionDate,
+  sortTransactionsNewestFirst,
+} from "../../lib/transactions";
 
 export default async function TransactionsPage() {
   const cookieStore = await cookies();
@@ -58,12 +17,12 @@ export default async function TransactionsPage() {
       ? savedFilter
       : "all";
 
-  const filteredTransactions = transactions
-    .filter(
+  const filteredTransactions = sortTransactionsNewestFirst(
+    dummyTransactions.filter(
       (transaction) =>
         selectedType === "all" || transaction.type === selectedType,
-    )
-    .sort((first, second) => second.date.localeCompare(first.date));
+    ),
+  );
 
   const filters = [
     { value: "all", label: "Semua" },
@@ -161,11 +120,13 @@ export default async function TransactionsPage() {
                   {filteredTransactions.map((transaction) => (
                     <tr key={transaction.id}>
                       <td className="px-3 py-4 font-medium">
-                        {transaction.name}
+                        {transaction.title}
                       </td>
 
                       <td className="whitespace-nowrap px-3 py-4 text-slate-600">
-                        {transaction.date.split("-").reverse().join("/")}
+                        {formatTransactionDate(
+                          transaction.transaction_date,
+                        )}
                       </td>
 
                       <td className="px-3 py-4">

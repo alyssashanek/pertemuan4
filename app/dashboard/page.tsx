@@ -1,64 +1,24 @@
-type Transaction = {
-  id: string;
-  name: string;
-  type: "income" | "expense";
-  amount: number;
-  date: string;
-};
-
-const transactions: Transaction[] = [
-  {
-    id: "1",
-    name: "Uang bulanan",
-    type: "income",
-    amount: 2000000,
-    date: "2026-09-01",
-  },
-  {
-    id: "2",
-    name: "Makan siang",
-    type: "expense",
-    amount: 25000,
-    date: "2026-09-02",
-  },
-  {
-    id: "3",
-    name: "Transportasi",
-    type: "expense",
-    amount: 50000,
-    date: "2026-09-03",
-  },
-  {
-    id: "4",
-    name: "Pendapatan freelance",
-    type: "income",
-    amount: 500000,
-    date: "2026-09-04",
-  },
-];
-
-function formatRupiah(amount: number) {
-  return new Intl.NumberFormat("id-ID", {
-    style: "currency",
-    currency: "IDR",
-    maximumFractionDigits: 0,
-  }).format(amount);
-}
+import {
+  dummyTransactions,
+  formatRupiah,
+  formatTransactionDate,
+  sortTransactionsNewestFirst,
+} from "../../lib/transactions";
 
 export default function DashboardPage() {
-  const totalIncome = transactions
+  const totalIncome = dummyTransactions
     .filter((transaction) => transaction.type === "income")
     .reduce((total, transaction) => total + transaction.amount, 0);
 
-  const totalExpense = transactions
+  const totalExpense = dummyTransactions
     .filter((transaction) => transaction.type === "expense")
     .reduce((total, transaction) => total + transaction.amount, 0);
 
   const balance = totalIncome - totalExpense;
 
-  const recentTransactions = [...transactions]
-    .sort((first, second) => second.date.localeCompare(first.date))
-    .slice(0, 5);
+  const recentTransactions = sortTransactionsNewestFirst(
+    dummyTransactions,
+  ).slice(0, 5);
 
   return (
     <main className="min-h-screen bg-slate-50 px-6 py-12 text-slate-900">
@@ -155,20 +115,22 @@ export default function DashboardPage() {
                   {recentTransactions.map((transaction) => (
                     <tr key={transaction.id}>
                       <td className="px-3 py-4 font-medium">
-                        {transaction.name}
+                        {transaction.title}
                       </td>
 
                       <td className="whitespace-nowrap px-3 py-4 text-slate-600">
-                        {transaction.date.split("-").reverse().join("/")}
+                        {formatTransactionDate(
+                          transaction.transaction_date,
+                        )}
                       </td>
 
                       <td className="px-3 py-4">
                         <span
-                          className={`inline-block rounded-full px-3 py-1 text-xs font-medium ${
+                          className={
                             transaction.type === "income"
-                              ? "bg-emerald-50 text-emerald-700"
-                              : "bg-rose-50 text-rose-700"
-                          }`}
+                              ? "inline-block rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700"
+                              : "inline-block rounded-full bg-rose-50 px-3 py-1 text-xs font-medium text-rose-700"
+                          }
                         >
                           {transaction.type === "income"
                             ? "Pemasukan"
@@ -177,11 +139,11 @@ export default function DashboardPage() {
                       </td>
 
                       <td
-                        className={`whitespace-nowrap px-3 py-4 text-right font-semibold ${
+                        className={
                           transaction.type === "income"
-                            ? "text-emerald-700"
-                            : "text-rose-700"
-                        }`}
+                            ? "whitespace-nowrap px-3 py-4 text-right font-semibold text-emerald-700"
+                            : "whitespace-nowrap px-3 py-4 text-right font-semibold text-rose-700"
+                        }
                       >
                         {transaction.type === "income" ? "+" : "-"}
                         {formatRupiah(transaction.amount)}
