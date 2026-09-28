@@ -127,11 +127,3 @@ Total Pengeluaran Bulanan = SUM(amount) WHERE type = 'expense' AND transaction_d
 ```text
 Sisa Anggaran = Budget Bulanan - Total Pengeluaran Bulanan
 ```
-
-## Pembagian SRS/Fitur
-
-| Programmer | SRS Kode | User Story / Tanggung Jawab |
-| ---------- | -------- | --------------------------- |
-| Arini Latifatul Qalbiah | SRS-21, SRS-22 | Sebagai pengguna, saya ingin menetapkan, mengubah, dan memilih anggaran pengeluaran berdasarkan bulan agar budget bulanan saya tersimpan dan dapat dikelola. Bertanggung jawab atas data budget, keamanan RLS, dan kontrak server. |
-| Alodia Evelyn Pratikno | SRS-23, SRS-24, SRS-25 | Sebagai pengguna, saya ingin melihat ringkasan budget, total pengeluaran, sisa anggaran, dan indikator status penggunaan pada dashboard tanpa reload halaman. Bertanggung jawab atas dashboard dan pengalaman budget. |
-| Alyssa Shane Kurniawan | SRS-12, SRS-13, SRS-14, SRS-15, SRS-16, SRS-25 | Sebagai pengguna, saya ingin menambah, mengubah, menghapus, dan memfilter transaksi tanpa reload halaman agar pengelolaan transaksi lebih cepat. Bertanggung jawab atas manajemen transaksi dan filter AJAX. |
