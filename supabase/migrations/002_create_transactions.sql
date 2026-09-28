@@ -24,44 +24,6 @@ CREATE INDEX IF NOT EXISTS idx_transactions_user_id
 CREATE INDEX IF NOT EXISTS idx_transactions_user_date
   ON transactions (user_id, transaction_date DESC);
 
--- Aktifkan RLS — WAJIB agar policy berlaku (FR-08, SRS-19, SRS-20)
-ALTER TABLE transactions ENABLE ROW LEVEL SECURITY;
-
--- ─────────────────────────────────────────────
--- RLS POLICIES
--- Semua policy menggunakan auth.uid() untuk memastikan
--- user hanya bisa mengakses data miliknya sendiri.
--- ─────────────────────────────────────────────
-
--- SELECT: user hanya bisa melihat transaksi miliknya (SRS-19)
-CREATE POLICY "transactions_select_own"
-  ON transactions
-  FOR SELECT
-  USING (auth.uid() = user_id);
-
--- INSERT: user hanya bisa membuat transaksi untuk dirinya sendiri (SRS-18)
-CREATE POLICY "transactions_insert_own"
-  ON transactions
-  FOR INSERT
-  WITH CHECK (auth.uid() = user_id);
-
--- UPDATE: user hanya bisa mengubah transaksi miliknya (SRS-20)
--- WITH CHECK memastikan user_id tidak bisa diganti ke user lain
-CREATE POLICY "transactions_update_own"
-  ON transactions
-  FOR UPDATE
-  USING (auth.uid() = user_id)
-  WITH CHECK (auth.uid() = user_id);
-
--- DELETE: user hanya bisa menghapus transaksi miliknya (SRS-20)
-CREATE POLICY "transactions_delete_own"
-  ON transactions
-  FOR DELETE
-  USING (auth.uid() = user_id);
-
--- Trigger: otomatis update kolom updated_at setiap kali baris diubah
--- Reuse fungsi update_updated_at_column dari migration 001
-CREATE TRIGGER transactions_updated_at
-  BEFORE UPDATE ON transactions
-  FOR EACH ROW
-  EXECUTE FUNCTION update_updated_at_column();
+-- RLS policies, triggers, dan indexes didefinisikan secara idempoten
+-- di migration 003_complete_schema.sql menggunakan DROP IF EXISTS.
+-- Tidak perlu didefinisikan ulang di sini untuk menghindari konflik duplikasi.
