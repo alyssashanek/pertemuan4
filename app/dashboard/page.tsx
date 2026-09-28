@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { getDashboardData } from "./actions";
 import type { DashboardData } from "./actions";
+import BudgetSummary from "./budget-summary";
 
 type DashboardState =
   | { status: "loading" }
@@ -282,6 +283,8 @@ export default function DashboardPage() {
             </>
           )}
         </div>
+
+        <BudgetSummary />
       </div>
     </main>
   );
