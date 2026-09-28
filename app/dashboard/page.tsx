@@ -33,10 +33,6 @@ export default function DashboardPage() {
           </p>
         </header>
 
-        <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
-          # masih pake data dummy
-        </div>
-
         <section
           aria-label="Ringkasan keuangan"
           className="grid gap-6 md:grid-cols-3"
