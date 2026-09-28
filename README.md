@@ -38,6 +38,11 @@ Expense Tracker Mahasiswa adalah aplikasi web yang digunakan untuk membantu maha
 | **SRS-18** | Kepemilikan Transaksi         | Sebagai pengguna, saya ingin setiap transaksi terhubung dengan akun saya agar setiap transaksi memiliki pemilik yang jelas.                    | Setiap transaksi memiliki `user_id` yang terhubung dengan akun pengguna.                                 |
 | **SRS-19** | Authorization - Read          | Sebagai pengguna, saya ingin hanya dapat melihat transaksi milik saya agar data pengguna lain tidak dapat saya akses.                          | Pengguna hanya dapat membaca transaksi yang memiliki `user_id` sesuai dengan user yang login.            |
 | **SRS-20** | Authorization - Update/Delete | Sebagai pengguna, saya ingin hanya dapat mengubah dan menghapus transaksi milik saya agar data saya tetap aman.                                | Pengguna hanya dapat mengubah dan menghapus transaksi miliknya sendiri menggunakan authorization/RLS.    |
+| **SRS-21** | Set Budget Bulanan            | Sebagai pengguna, saya ingin menetapkan dan mengubah anggaran pengeluaran untuk setiap bulan agar pengeluaran saya memiliki batas yang jelas. | Satu pengguna hanya memiliki satu budget per bulan; nominal budget harus lebih dari nol. |
+| **SRS-22** | Pilih Budget Bulanan          | Sebagai pengguna, saya ingin memilih bulan untuk melihat anggaran agar dapat mengevaluasi pengeluaran pada periode yang tepat. | Sistem memuat budget dan pengeluaran berdasarkan bulan yang dipilih tanpa reload halaman. |
+| **SRS-23** | Budget Summary                | Sebagai pengguna, saya ingin melihat total budget, total pengeluaran, dan sisa anggaran agar mengetahui kondisi keuangan bulanan. | Sisa anggaran dihitung dari budget dikurangi seluruh transaksi `expense` pada bulan terpilih. |
+| **SRS-24** | Indikator Budget              | Sebagai pengguna, saya ingin melihat status penggunaan anggaran agar dapat segera menyesuaikan pengeluaran. | Status aman untuk penggunaan di bawah 80%, hampir habis untuk 80% sampai kurang dari 100%, dan terlampaui untuk 100% atau lebih. |
+| **SRS-25** | AJAX Dashboard dan Transaksi  | Sebagai pengguna, saya ingin dashboard, manajemen transaksi, dan filter diperbarui tanpa reload agar aplikasi terasa lebih cepat digunakan. | Tambah, ubah, hapus, filter transaksi, pilih bulan, dan simpan budget menggunakan request asynchronous dengan state loading, kosong, dan error. |
 
 ## Database Schema
 
@@ -71,6 +76,19 @@ Expense Tracker Mahasiswa adalah aplikasi web yang digunakan untuk membantu maha
 | `created_at`       | TIMESTAMPTZ   | Waktu transaksi dibuat     |
 | `updated_at`       | TIMESTAMPTZ   | Waktu transaksi diperbarui |
 
+### `monthly_budgets`
+
+| Field          | Tipe          | Keterangan |
+| -------------- | ------------- | ---------- |
+| `id`           | UUID          | ID unik budget. |
+| `user_id`      | UUID          | ID pemilik budget, terhubung ke `auth.users.id`. |
+| `budget_month` | DATE          | Bulan budget, disimpan sebagai tanggal pertama pada bulan tersebut. |
+| `amount`       | NUMERIC(15,2) | Nominal anggaran pengeluaran, harus lebih dari nol. |
+| `created_at`   | TIMESTAMPTZ   | Waktu budget dibuat. |
+| `updated_at`   | TIMESTAMPTZ   | Waktu budget diperbarui. |
+
+Setiap kombinasi `user_id` dan `budget_month` harus unik. Tabel ini menggunakan Row Level Security sehingga pengguna hanya dapat mengakses budget miliknya sendiri.
+
 ## Authorization
 
 Setiap transaksi hanya dapat diakses oleh pemiliknya.
@@ -101,3 +119,19 @@ Total Pengeluaran = SUM(amount) WHERE type = 'expense'
 ```
 
 Semua perhitungan hanya menggunakan transaksi milik pengguna yang sedang login.
+
+```text
+Total Pengeluaran Bulanan = SUM(amount) WHERE type = 'expense' AND transaction_date berada pada bulan yang dipilih
+```
+
+```text
+Sisa Anggaran = Budget Bulanan - Total Pengeluaran Bulanan
+```
+
+## Pembagian SRS/Fitur
+
+| Programmer | SRS Kode | User Story / Tanggung Jawab |
+| ---------- | -------- | --------------------------- |
+| Arini Latifatul Qalbiah | SRS-21, SRS-22 | Sebagai pengguna, saya ingin menetapkan, mengubah, dan memilih anggaran pengeluaran berdasarkan bulan agar budget bulanan saya tersimpan dan dapat dikelola. Bertanggung jawab atas data budget, keamanan RLS, dan kontrak server. |
+| Alodia Evelyn Pratikno | SRS-23, SRS-24, SRS-25 | Sebagai pengguna, saya ingin melihat ringkasan budget, total pengeluaran, sisa anggaran, dan indikator status penggunaan pada dashboard tanpa reload halaman. Bertanggung jawab atas dashboard dan pengalaman budget. |
+| Alyssa Shane Kurniawan | SRS-12, SRS-13, SRS-14, SRS-15, SRS-16, SRS-25 | Sebagai pengguna, saya ingin menambah, mengubah, menghapus, dan memfilter transaksi tanpa reload halaman agar pengelolaan transaksi lebih cepat. Bertanggung jawab atas manajemen transaksi dan filter AJAX. |
