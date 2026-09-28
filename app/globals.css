@@ -1,26 +1,41 @@
 @import "tailwindcss";
 
+/* ──────────────────────────────────────────
+   Red Broadcast Design System — Color Tokens
+   Sesuai red-broadcast-DESIGN.md
+────────────────────────────────────────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Core colors */
+  --color-primary:          #FF0000;  /* Broadcast Red — Subscribe, live badge, progress */
+  --color-primary-hover:    #CC0000;  /* Hover state for red elements */
+  --color-secondary:        #065FD4;  /* Link Blue — text links, hashtags */
+  --color-neutral:          #606060;  /* Gray 600 — secondary text, metadata */
+
+  /* Surfaces */
+  --color-background:       #FFFFFF;  /* Light mode primary background */
+  --color-surface:          #F2F2F2;  /* Chip bar, sidebar hover, card fill */
+  --color-border:           #E5E5E5;  /* Dividers, card outlines */
+
+  /* Text */
+  --color-text-primary:     #0F0F0F;  /* Near Black — titles, primary content */
+  --color-text-secondary:   #606060;  /* Gray 600 — metadata, descriptions */
+
+  /* Semantic */
+  --color-success:          #2BA640;
+  --color-warning:          #FB8C00;
+  --color-error:            #FF0000;  /* Reuses primary red */
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans:              var(--font-roboto);
+  --color-background:       var(--color-background);
+  --color-foreground:       var(--color-text-primary);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+/* Base */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-background);
+  color:            var(--color-text-primary);
+  font-family:      var(--font-roboto), Roboto, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
