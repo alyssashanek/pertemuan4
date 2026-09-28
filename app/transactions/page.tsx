@@ -50,10 +50,6 @@ export default async function TransactionsPage() {
           </p>
         </header>
 
-        <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
-          # masih pake data dummy
-        </div>
-
         <section
           aria-label="Daftar transaksi"
           className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
